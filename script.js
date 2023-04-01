@@ -1,6 +1,27 @@
 // Your JS code here.
-Your task is to implement "slide in on scroll" i.e. images in main.html need to slide in to their actual positions when scrolling. https://user-images.githubusercontent.com/59690052/164887062-0b2b1806-42b8-4d43-9cea-e464bad326c6.mp4
-
-You need to write code inside the script tag in the main.html file.
-
-Create a function that will add the active classname to the image, when scrolled to it. Pass that function to debounce function.
+	const slideIns = document.querySelectorAll('.slide-in');
+		const slideInContainer = document.querySelector('.slide-in-container');
+		const debounce = (func, delay) => {
+			let debounceTimer;
+			return function() {
+				const context = this;
+				const args = arguments;
+				clearTimeout(debounceTimer);
+				debounceTimer = setTimeout(() => func.apply(context, args), delay);
+			}
+		};
+		const checkSlide = () => {
+			const slideInAt = (window.scrollY + window.innerHeight) - slideInContainer.clientHeight / 2;
+			const containerBottom = slideInContainer.offsetTop + slideInContainer.clientHeight;
+			slideIns.forEach(slideIn => {
+				const imageBottom = slideIn.offsetTop + slideIn.clientHeight;
+				const isHalfShown = slideIn.offsetTop < slideInAt;
+				const isNotScrolledPast = imageBottom > window.scrollY;
+				if (isHalfShown && isNotScrolledPast) {
+					slideIn.classList.add('active');
+				} else {
+					slideIn.classList.remove('active');
+				}
+			});
+		};
+		window.addEventListener('scroll', debounce(checkSlide, 20));
